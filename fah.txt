@@ -1,0 +1,289 @@
+//Validation//
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <h1>Registration</h1>
+    <style>
+        body{
+            text-align: center;
+        }
+        h1{
+            background-color: lavenderblush;
+        }
+        input{
+            padding: 10px;
+        }
+    </style>
+    <script>
+        function validata() {
+ 
+            var names=['Ganesh','Arjun','Singh'];
+            var flag;
+            flag = 1;
+            var lowerCase = /[a-z]/g;
+            var upperCase = /[A-Z]/g;
+            var numbers = /[0-9]/g;
+            var specialCharacters = /[!@#$%^&*]/g;
+            if(flag == 1){
+ 
+        
+            if(document.getElementById("username").value.length<5 || document.getElementById("username").value.length>15) {
+                flag++;
+                alert("invalid username,not in the length of 5 to 15");
+            }
+            
+          else if(!document.getElementById("pass").value.match(lowerCase) || !document.getElementById("pass").value.match(upperCase) || !document.getElementById("pass").value.match(numbers) || !document.getElementById("pass").value.match(specialCharacters)) {
+                flag++;
+                alert("Invalid password");
+            }
+ 
+            else if(!document.getElementById("mail").value.match(/[a-z A-Z 0-9]+[@]+[a-z]+[.]+[a-z]/)) {
+                flag++;
+                alert("Invalid mail Id");
+            }
+ 
+         else if(document.getElementById("phone").value.length!=10) {
+                flag++;
+                alert("Invalid contact number,must contain 10 numbers");
+            }
+ 
+          else if( flag == 1)
+            {
+                for(let i =0; i<names.length; i++)
+                { 
+                    if(document.getElementById("username").value == names[i]){
+                        flag++;
+                        alert('user name exists');
+                    }
+                }
+                
+                
+            }
+        
+        }
+            if(flag == 1)
+            {   
+                document.getElementById("printhere").innerHTML="successfully registered";
+                alert('Successfully Registered');
+            }
+        }
+ 
+    </script>
+</head>
+<body>
+    <form id="adduser" >
+        <p>Enter Name <input type="text" id="username"> <br></p>
+        <p>Enter Password <input type="password" id="pass"> <br></p>
+        <p>Enter Email <input type="text" id="mail"> <br></p>
+        <p>Enter ContactNo.<input type="text" id="phone"> <br></p>
+    
+        Submit:<input type="button" value="submit" onclick="validata()">
+   
+    <p id="printhere">
+ 
+    </p>
+</form>
+</body>
+</html>
+
+//Array//
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gadgets</title>
+    <script src="./common.js"></script>
+    <script>
+        let mobiles =["Iphone","Android","Windows"];
+        let laptops =["Mac","Dell","Hp"];
+        let tv =["Samsung","Onida","LG"];
+
+          let displayList = () => {
+              
+              let list = $("list")
+              list.innerHTML ="";
+              if($("devices").value == "Laptop")
+              {
+                
+                  for (var index = 0; index<laptops.length; index++) {
+                    list.innerHTML += "<li>" + laptops[index] + "</li>";
+                  }
+                 
+              }
+             else if($("devices").value == "Mobile")
+              {
+                  
+                for (var index = 0; index<mobiles.length; index++) {
+                    list.innerHTML += "<li>" + mobiles[index] + "</li>";
+                  }
+                 
+              }
+              else{
+                
+                for (var index = 0; index<tv.length; index++) {
+                    list.innerHTML += "<li>" + tv[index] + "</li>";
+                  }
+              }
+          }
+    </script>
+</head>
+<body>
+    <div>
+        <select id="devices" onchange="displayList()">
+           <option>Select One</option>
+            <option value="Laptop">Laptops</option>
+            <option value="Mobile">Mobiles</option>
+            <option value="Tv">Tv</option>
+        </select>
+    </div>
+    <ul id="list">
+
+    </ul>
+</body>
+</html>
+
+//Hotel//
+
+//app.js//
+
+const { send } = require("process");
+ 
+express = require("express");
+app = express();
+ 
+hotel = require("./hotel.json");
+ 
+// Get Details of Hotels
+app.get("/details", function(req, res)
+{
+    nameList = [];
+    hotel.forEach(element =>
+    {
+        nameList.push(element.name) // this will only send name of the hotel, for full detail use push(element) 
+    });
+    res.send(nameList);
+})
+ 
+// Search Hotel by City (Mysore, Banglore and Hyderabad)
+app.get("/searchByCity", function(req, res)
+{
+    keyword = req.query.sCity;
+    searchCity = [];
+    hotel.forEach(element =>
+    {
+        if(keyword == element.city)
+        {
+            searchCity.push(element.name); // this will only send name of the hotel, for full detail use push(element)
+        }
+    });
+    res.send(searchCity);
+})
+ 
+// Search Hotel by Type (Veg/Non-Veg)
+app.get("/searchByType", function(req, res)
+{
+    keyword = req.query.sType;
+    searchType = [];
+    hotel.forEach(element =>
+    {
+        if(keyword == element.type)
+        {
+            searchType.push(element.name); // this will only send name of the hotel, for full detail use push(element)
+        }
+    });
+    res.send(searchType);
+})
+ 
+// Search by Cuisine (Indian, Arabian and Italian)
+app.get("/searchByCuisine", function(req, res)
+{
+    keyword = req.query.sCuisine;
+    searchCuisine = [];
+    hotel.forEach(element =>
+    {
+        for (const key in element.cuisine)
+        {
+            if(keyword == element.cuisine[key])
+            {
+                searchCuisine.push(element.name);
+            }
+        }
+    });
+    res.send(searchCuisine);
+})
+ 
+// Server Listening...
+app.listen(3000, function(req, res)
+{
+    console.log("Server listening to port 3000");
+})
+
+//hotel.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel List</title>
+</head>
+<body>
+    <div>
+        <form action="http://localhost:3000/details">
+            View Hotels <input type="submit">
+        </form>
+    </div>
+    <div>
+        <form action="http://localhost:3000/searchByCity">
+            Search Hotels by City <input type="text" name="sCity">
+            <input type="submit">
+        </form>
+    </div>
+    <div>
+        <form action="http://localhost:3000/searchByType">
+            <select name="sType">
+                <option>--type--</option>
+                <option value="Vegeterian">Vegetarian</option>
+                <option value="Non-Vegeterian">Non-Vegetarian</option>
+            </select>
+            <input type="submit">
+        </form>
+    </div>
+    <div>
+        <form action="http://localhost:3000/searchByCuisine">
+            Search Hotels by Cuisine <input type="text" name="sCuisine">
+            <input type="submit">
+        </form>
+    </div>
+    
+</body>
+</html>
+
+//hotel.json//
+
+[
+    {
+        "name": "mohith",
+        "city": "Mpl",
+        "type": "Vegeterian",
+        "cuisine": ["Indian", "chinese"]
+    },
+    {
+        "name": "kalyani",
+        "city": "Mysore",
+        "type": "Vegeterian",
+        "cuisine": ["Indian"]
+    },
+    {
+        "name": "rajbhavan",
+        "city": "bangalore",
+        "type": "Vegetaian",
+        "cuisine": ["Indian"]
+    }
+]
